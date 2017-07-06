@@ -1,0 +1,16 @@
+// Overrides
+ui-gmap-google-map img {
+    max-width: none;
+}
+
+#footer .md-toolbar-tools h2 {
+    font-size: 1.8rem;
+    line-height: 2.2rem;
+}
+
+//Grid
+md-grid-list md-grid-tile {
+    md-grid-tile-header, md-grid-tile-footer md-icon {
+        color: rgba(255, 255, 255, 0.54);
+    }
+}

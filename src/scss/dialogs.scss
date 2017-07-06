@@ -1,0 +1,8 @@
+$layout-breakpoint-xs: 600px !default;
+
+@media (max-width: $layout-breakpoint-xs) {
+  .mobile-fullwidth-dialog {
+    max-width: 100%;
+    min-height: 100%;
+  }
+}

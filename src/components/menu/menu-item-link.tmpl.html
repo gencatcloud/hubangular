@@ -1,0 +1,5 @@
+<md-button ng-click="hubMenuItem.openLink(hubMenuItem.item)" class="md-primary md-raised side-menu-link" ng-class="{ 'md-hue-1': hubMenuItem.item.active }">
+    <md-icon ng-if="::(hubMenuItem.item.icon !== undefined)" class="side-menu-icon" md-font-icon="{{::hubMenuItem.item.icon}}"></md-icon>
+    <span translate>{{::hubMenuItem.item.name}}</span>
+    <small ng-if="hubMenuItem.item.badge" theme-background="accent" class="side-menu-badge">{{::hubMenuItem.item.badge}}</small>
+</md-button>

@@ -1,0 +1,16 @@
+md-edit-dialog md-input-container input:not([max-length]) {
+    margin-bottom: 24px;
+}
+
+hub-table .responsive-mode .column {
+    min-height: 76px;
+
+    .column-value {
+        word-wrap: break-word;
+    }
+}
+
+hub-table .table-mode .column md-icon[md-font-icon] {
+    min-height: 16px;
+    min-width: 16px;
+}

@@ -1,0 +1,143 @@
+<div class="table-mode" ng-if="$ctrl._showTable && $ctrl.hasColumns()">
+    <md-table-container>
+        <table md-table md-progress="$ctrl.progress">
+            <thead md-head>
+            <tr md-row>
+                <th md-column class="column" ng-if="::$ctrl._id">{{::$ctrl._id.name | translate}}</th>
+                <th md-column class="column"
+                    ng-repeat-start="column in ::$ctrl._columns"
+                    ng-if="::column.type != $ctrl._ColumnType.NUMBER">
+                    <md-icon ng-if="::column.getEditable()" md-font-icon="zmdi zmdi-edit"></md-icon>
+                    <span>{{::column.name | translate}}</span>
+                </th>
+                <th md-column md-numeric class="column"
+                    ng-if="::column.type == $ctrl._ColumnType.NUMBER"
+                    ng-repeat-end>
+                    <md-icon ng-if="::column.getEditable()" md-font-icon="zmdi zmdi-edit"></md-icon>
+                    <span>{{::column.name | translate}}</span>
+                </th>
+            </tr>
+            </thead>
+            <tbody md-body>
+            <tr md-row hub-row
+                ng-repeat="content in $ctrl.contents | limitTo: $ctrl._pagination.getRowsPerPage() : ($ctrl._pagination.currentPage-1) * $ctrl._pagination.getRowsPerPage()">
+                <!--Id column-->
+                <td md-cell ng-if="::$ctrl._id"><span>{{::content[$ctrl._id.field]}}</span></td>
+
+                <!--Text column-->
+                <td md-cell ng-repeat-start="column in ::$ctrl._columns"
+                    ng-if="::column.type == $ctrl._ColumnType.TEXT && !column.getEditable()">
+                    {{::content[column.field]}}
+                </td>
+                <td md-cell ng-if="::column.type == $ctrl._ColumnType.TEXT && column.getEditable()"
+                    ng-click="column.editContent($event, content)"
+                    ng-class="{'md-placeholder': !content[column.field]}">
+                    {{content[column.field] || column.getPlaceholder()}}
+                </td>
+
+                <!--Number column-->
+                <td md-cell
+                    ng-if="::column.type == $ctrl._ColumnType.NUMBER && !column.getEditable()">
+                    {{::column.getFractionedNumber(content)}}
+                </td>
+                <td md-cell
+                    ng-if="::column.type == $ctrl._ColumnType.NUMBER && column.getEditable()"
+                    ng-click="column.editContent($event, content)"
+                    ng-class="{'md-placeholder': !column.getFractionedNumber(content)}">
+                    {{column.getFractionedNumber(content) || column.getPlaceholder()}}
+                </td>
+
+                <!--Other columns-->
+                <td md-cell ng-repeat-end
+                    ng-if="::column.type != $ctrl._ColumnType.TEXT && column.type != $ctrl._ColumnType.NUMBER">
+                    <!--Menu column-->
+                    <span ng-if="::column.type == $ctrl._ColumnType.MENU && !column.getEditable()">{{::column.getOptionLabel(content[column.field])}}</span>
+                    <md-select ng-if="::column.type == $ctrl._ColumnType.MENU && column.getEditable()"
+                               ng-model="::content[column.field]"
+                               placeholder="{{::column.getPlaceholder()}}" aria-label="select">
+                        <md-option ng-value="option" ng-repeat="option in ::column.options">
+                            {{::column.getOptionLabel(option)}}
+                        </md-option>
+                    </md-select>
+
+                    <!--Boolean column-->
+                    <span ng-if="::column.type == $ctrl._ColumnType.BOOLEAN && !column.getEditable()">{{::content[column.field]? column.getTrueLabel():column.getFalseLabel()}}</span>
+                    <md-select ng-if="::column.type == $ctrl._ColumnType.BOOLEAN && column.getEditable()"
+                               ng-model="::content[column.field]"
+                               aria-label="select">
+                        <md-option ng-value="true">{{::column.getTrueLabel() | translate}}</md-option>
+                        <md-option ng-value="false">{{::column.getFalseLabel() | translate}}</md-option>
+                    </md-select>
+                </td>
+                <td ng-show="::$ctrl._hasActions" md-cell ng-transclude="actions"></td>
+            </tr>
+            </tbody>
+        </table>
+    </md-table-container>
+
+    <md-table-pagination ng-if="::$ctrl._pagination" md-limit="$ctrl._pagination.getRowsPerPage()"
+                         md-page="$ctrl._pagination.currentPage"
+                         md-total="{{$ctrl._pagination.getTotalRows()}}"
+                         md-on-paginate="$ctrl.onPaginate"></md-table-pagination>
+</div>
+<div class="responsive-mode" ng-if="!$ctrl._showTable && $ctrl.hasColumns()" layout-margin hub-infinite-scroll
+     previous-page="$ctrl._pagination.getPrevious(done)" next-page="$ctrl._pagination.getNext(done)">
+    <div hub-row md-whiteframe="2" ng-repeat="content in $ctrl.contents track by $index">
+        <!--Id column-->
+        <div class="padding-right-10 padding-top-10 opacity-50" layout layout-align="end">
+            <span ng-if="::$ctrl._id">{{::content[$ctrl._id.field]}}</span>
+            <span ng-if="::!$ctrl._id">#{{::$index}}</span>
+        </div>
+        <md-list>
+            <md-list-item class="column" ng-repeat="column in ::$ctrl._columns" layout
+                          layout-align="space-between center">
+                <span flex="50" class="column-name md-body-2">{{::column.name | translate}}</span>
+                <div flex="50" class="column-value">
+                    <!--Text column-->
+                    <span ng-if="::column.type == $ctrl._ColumnType.TEXT && !column.getEditable()">{{::content[column.field]}}</span>
+                    <md-input-container md-no-float
+                                        ng-if="::column.type == $ctrl._ColumnType.TEXT && column.getEditable()">
+                        <input name="input" ng-model="content[column.field]"
+                               placeholder="{{::column.getPlaceholder()}} " type="text">
+                    </md-input-container>
+
+                    <!--Number column-->
+                    <span ng-if="::column.type == $ctrl._ColumnType.NUMBER && !column.getEditable()">{{::column.getFractionedNumber(content)}}</span>
+                    <md-input-container md-no-float
+                                        ng-if="::column.type == $ctrl._ColumnType.NUMBER && column.getEditable()">
+                        <input name="input" ng-model="content[column.field]"
+                               placeholder="{{::column.getPlaceholder()}} " type="number" step="any">
+                    </md-input-container>
+
+                    <!--Menu column-->
+                    <span ng-if="::column.type == $ctrl._ColumnType.MENU && !column.getEditable()">{{::column.getOptionLabel(content[column.field])}}</span>
+                    <md-select ng-if="::column.type == $ctrl._ColumnType.MENU && column.getEditable()"
+                               ng-model="::content[column.field]"
+                               placeholder="{{::column.getPlaceholder()}}" aria-label="select">
+                        <md-option ng-value="option" ng-repeat="option in ::column.options">
+                            {{::column.getOptionLabel(option)}}
+                        </md-option>
+                    </md-select>
+
+                    <!--Boolean column-->
+                    <span ng-if="::column.type == $ctrl._ColumnType.BOOLEAN && !column.getEditable()">{{::content[column.field]? column.getTrueLabel():column.getFalseLabel()}}</span>
+                    <md-select ng-if="::column.type == $ctrl._ColumnType.BOOLEAN && column.getEditable()"
+                               ng-model="::content[column.field]"
+                               aria-label="select">
+                        <md-option ng-value="true">{{::column.getTrueLabel() | translate}}</md-option>
+                        <md-option ng-value="false">{{::column.getFalseLabel() | translate}}</md-option>
+                    </md-select>
+                </div>
+            </md-list-item>
+        </md-list>
+        <div ng-show="::$ctrl._hasActions"
+             layout layout-align="end center"
+             ng-transclude="actions"></div>
+
+    </div>
+    <div ng-if="$ctrl._showProgress" layout="row" layout-sm="column" layout-align="space-around">
+        <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+    </div>
+</div>
+
+<div hide ng-transclude></div>

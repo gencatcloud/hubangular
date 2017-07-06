@@ -1,0 +1,22 @@
+// Import the animations
+@import "bower_components/animate.css-scss/properties.scss";
+@import "bower_components/animate.css-scss/_fading-entrances/fading-entrances.scss";
+@import "bower_components/animate.css-scss/_fading-exits/fading-exits.scss";
+@import "bower_components/animate.css-scss/_attention-seekers/wobble.scss";
+
+// Add your CSS here
+html, body {
+    height: 100%;
+}
+
+// set template font family
+button, select, html, textarea, input {
+    font-family: RobotoDraft, Roboto, 'Helvetica Neue', sans-serif;
+}
+
+/**
+ *  Do not remove this comments bellow. It's the markers used by gulp-inject to inject
+ *  all your sass files automatically
+ */
+// injector
+// endinjector
